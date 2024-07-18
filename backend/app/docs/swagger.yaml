@@ -1,0 +1,442 @@
+basePath: /api/v1/external
+definitions:
+  models.AllPostsGetResponse:
+    properties:
+      count_posts_on_page:
+        type: integer
+      count_total:
+        type: integer
+      posts:
+        items:
+          $ref: '#/definitions/models.Post'
+        type: array
+    type: object
+  models.AllUsersGetResponse:
+    properties:
+      count_total:
+        type: integer
+      count_users_on_page:
+        type: integer
+      users:
+        items:
+          $ref: '#/definitions/models.User'
+        type: array
+    type: object
+  models.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  models.LoginRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  models.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  models.Post:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  models.PostCreateRequest:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    required:
+    - content
+    - title
+    type: object
+  models.PostCreateResponse:
+    properties:
+      post:
+        $ref: '#/definitions/models.Post'
+    type: object
+  models.PostDeleteResponse:
+    properties:
+      post:
+        $ref: '#/definitions/models.Post'
+    type: object
+  models.PostGetResponse:
+    properties:
+      post:
+        $ref: '#/definitions/models.Post'
+    type: object
+  models.PostUpdateRequest:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    type: object
+  models.PostUpdateResponse:
+    properties:
+      post:
+        $ref: '#/definitions/models.Post'
+    type: object
+  models.RefreshRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  models.RefreshResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
+  models.RegistersRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  models.RegistersResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  models.User:
+    properties:
+      id:
+        type: string
+      login:
+        type: string
+    type: object
+  models.UserCreateRequest:
+    properties:
+      login:
+        type: string
+    required:
+    - login
+    type: object
+  models.UserCreateResponse:
+    properties:
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  models.UserDeleteResponse:
+    properties:
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  models.UserGetResponse:
+    properties:
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Server for Blog App
+  title: Blog App API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user.
+      parameters:
+      - description: login request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Login
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refreshes a user's access token.
+      parameters:
+      - description: refresh request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RefreshRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.RefreshResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Refresh
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Registers a new user.
+      parameters:
+      - description: register request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegistersRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.RegistersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Register
+      tags:
+      - auth
+  /posts:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        minimum: 1
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AllPostsGetResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get all posts
+      tags:
+      - posts
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: update post request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.PostUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PostUpdateResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update post
+      tags:
+      - posts
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: create post request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.PostCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PostCreateResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create post
+      tags:
+      - posts
+  /posts/{post_id}:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PostDeleteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete post
+      tags:
+      - posts
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PostGetResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get post
+      tags:
+      - posts
+  /users:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AllUsersGetResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get all users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: create user request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserCreateResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create user
+      tags:
+      - users
+  /users/{user_id}:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserDeleteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete user
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserGetResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user
+      tags:
+      - users
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
