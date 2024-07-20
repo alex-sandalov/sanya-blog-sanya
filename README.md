@@ -1,13 +1,11 @@
 # SANYA-BLOG-SANYA
 Данный проект разрабатывается с использованием технологии REST API. Цель проекта — познакомиться с различными способами аутентификации
 
-## Открыть Swagger
+## Запуск приложения
 ```sh
-go run backend/app/cmd/main.go
+make build && make run
 ```
-```
-http://localhost:8080/swagger/index.html
-```
+
 
 ## Стек технологий
 ### Backend

@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  blog-app:
+    build: ./
+    env_file:
+      - .env 
+    ports:
+      - 8080:8080
+    networks:
+      - blog-app-net
+
+networks:
+  blog-app-net:
+    driver: bridge
+
